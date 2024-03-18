@@ -6,7 +6,7 @@ This project entails the design and verification of a 4-Bit Arithmetic Logic Uni
 **Block Diagram:**
 ![image](https://github.com/priyamandot/Design-and-Verification-of-a-4Bit-ALU/assets/139869341/16731152-347a-47b2-b207-6b440b2456f9)
 
-**1) ALU-Block:**
+**1) Decoder Block:**
 The ALU block functions as a router for computational circuits. Operations are determined by the inputs S1 and S0 as follows:
 - 00: Addition
 - 01: Subtraction
