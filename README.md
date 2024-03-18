@@ -1,4 +1,4 @@
-## Title: Design and Verification of a 4-Bit ALU in Verilog
+## Design and Verification of a 4-Bit ALU in Verilog
 
 **Introduction:**
 This project entails the design and verification of a 4-Bit Arithmetic Logic Unit (ALU) capable of performing addition, subtraction, comparison, and logical AND operations. Various tools such as _NG-SPICE_ for circuit design, _Magic_ for layout, and _Verilog_ for verification are utilized throughout the project.
