@@ -1,0 +1,6 @@
+.subckt enable p3 p2 p1 p0 en q3 q2 q1 q0 vdd gnd
+    X3 p3 en q3 vdd gnd AND
+    X2 p2 en q2 vdd gnd AND
+    X1 p1 en q1 vdd gnd AND
+    X0 p0 en q0 vdd gnd AND
+.ends enable

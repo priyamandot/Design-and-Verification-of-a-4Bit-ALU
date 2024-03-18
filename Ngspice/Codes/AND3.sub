@@ -1,0 +1,5 @@
+
+.subckt AND3 a b c node_out vdd gnd
+    X1 a b o1 vdd gnd AND
+    X2 c o1 node_out vdd gnd AND
+.ends AND3

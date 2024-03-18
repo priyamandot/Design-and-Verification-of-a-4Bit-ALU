@@ -1,0 +1,8 @@
+tpd                 =  6.63572e-10 input = a0 output = g
+tpd                 =  6.63572e-10 input = a1 output = g
+tpd                 =  6.63572e-10 input = a2 output = g
+tpd                 =  6.63572e-10 input = a3 output = g
+tpd                 =  6.84783e-10 input = b0 output = g
+tpd                 =  6.84783e-10 input = b1 output = g
+tpd                 =  6.84783e-10 input = b2 output = g
+tpd                 =  6.84783e-10 input = b3 output = g

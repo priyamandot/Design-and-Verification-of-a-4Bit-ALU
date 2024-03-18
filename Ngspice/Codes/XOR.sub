@@ -1,0 +1,7 @@
+
+.subckt XOR node_a node_b node_out vdd gnd
+   X1 node_a node_b node_c vdd gnd NAND 
+   X2 node_a node_c node_d vdd gnd NAND
+   X3 node_b node_c node_e vdd gnd NAND
+   X4 node_e node_d node_out vdd gnd NAND
+.ends XOR

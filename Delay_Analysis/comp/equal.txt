@@ -1,0 +1,8 @@
+tpd                 =  3.03934e-09 input = a0 output = e
+tpd                 =  3.03934e-09 input = a1 output = e
+tpd                 =  3.03934e-09 input = a2 output = e
+tpd                 =  3.03934e-09 input = a3 output = e
+tpd                 =  9.05929e-10 input = b0 output = e
+tpd                 =  9.05929e-10 input = b1 output = e
+tpd                 =  9.05929e-10 input = b2 output = e
+tpd                 =  9.05929e-10 input = b3 output = e

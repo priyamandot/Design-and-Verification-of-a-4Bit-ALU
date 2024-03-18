@@ -1,0 +1,8 @@
+.subckt full_adder node_a node_b c_in s_0 c_out vdd gnd
+    X1 node_a node_b o1 vdd gnd XOR
+    X2 o1 c_in s_0 vdd gnd XOR
+    X3 c_in o1 o2 vdd gnd AND
+    X4 node_a node_b o3 vdd gnd AND
+    X5 o2 o3 c_out vdd gnd OR
+
+.ends full_adder

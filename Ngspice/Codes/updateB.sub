@@ -1,0 +1,9 @@
+.subckt updateB p3 p2 p1 p0 M q3 q2 q1 q0 vdd gnd
+
+    X3 p3 M q3 vdd gnd XOR
+    X2 p2 M q2 vdd gnd XOR
+    X1 p1 M q1 vdd gnd XOR
+    X0 p0 M q0 vdd gnd XOR
+    
+.ends updateB
+

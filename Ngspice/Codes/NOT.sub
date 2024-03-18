@@ -1,0 +1,10 @@
+
+.subckt NOT node_a node_out vdd gnd
+    Mp1o vdd node_a node_out vdd CMOSP W = {wp1} L = {lp1}
+    + AS = {5*wp1*LAMBDA} PS = {10*LAMBDA + 2*wp1} AD = {5*wp1*LAMBDA} PD = {10*LAMBDA + 2*wp1}
+
+    Mn1o node_out node_a gnd gnd CMOSN W = {wn2} L = {ln2}
+    + AS = {5*wn2*LAMBDA} PS = {10*LAMBDA + 2*wn2} AD = {5*wn2*LAMBDA} PD = {10*LAMBDA + 2*wn2}
+
+
+.ends NOT

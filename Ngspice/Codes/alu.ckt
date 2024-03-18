@@ -1,0 +1,179 @@
+ALU implementation on ngspice
+
+.include TSMC_180nm.txt
+.include NAND.sub
+.include NOT.sub
+.include OR.sub
+.include NOR.sub
+.include AND.sub
+.include XOR.sub
+.include XNOR.sub
+.include enable.sub
+.include updateB.sub
+.include full_adder.sub
+.include AND3.sub
+.include OR4.sub
+
+.param SUPPLY = 1.8
+.param LAMBDA = 0.18u
+
+.param wn1 = {10*LAMBDA}
+.param wn2 = {10*LAMBDA}
+.param ln1 = {2*LAMBDA}
+.param ln2 = {2*LAMBDA}
+
+.param wp1 = wn1
+.param wp2 = wn1
+.param lp1 = {LAMBDA}
+.param lp2 = {LAMBDA}
+
+.global gnd
+
+Vdd node_x gnd 'SUPPLY'
+
+* *input A
+V_in_a3 b3 gnd PULSE(1.8 0 0ns 100ps 100ps 400ns 800ns)
+V_in_a2 b2 gnd PULSE(0 1.8 0ns 100ps 100ps 400ns 800ns)
+V_in_a1 b1 gnd PULSE(1.8 0 0ns 100ps 100ps 400ns 800ns)
+V_in_a0 b0 gnd PULSE(0 1.8 0ns 100ps 100ps 400ns 800ns)
+
+*input B
+V_in_b3 a3 gnd PULSE(0 1.8 0ns 100ps 100ps 400ns 800ns)
+V_in_b2 a2 gnd PULSE(1.8 0 0ns 100ps 100ps 400ns 800ns)
+V_in_b1 a1 gnd PULSE(0 1.8 0ns 100ps 100ps 400ns 800ns)
+V_in_b0 a0 gnd PULSE(1.8 0 0ns 100ps 100ps 400ns 800ns)
+
+*selection lines
+V_in_s0 S0 gnd PULSE(1.8 0 0ns 100ps 100ps 200ns 400ns)
+V_in_s1 S1 gnd PULSE(1.8 0 0ns 100ps 100ps 400ns 800ns)
+
+* Va3 a3 0 DC 0V
+* Va2 a2 0 DC 1V
+* Va1 a1 0 DC 0V
+* Va0 a0 0 DC 1V
+* * even if the inputs are 1 , it will consider 1.8 because of supply ( MOSFETS ) ON AND OFF 
+
+* Vb3 b3 0 DC 1V
+* Vb2 b2 0 DC 1V
+* Vb1 b1 0 DC 0V
+* Vb0 b0 0 DC 1V
+
+* Vs0 S0 0 DC 1V
+* Vs1 S1 0 DC 0V
+
+*not of selection lines
+X1 S1 j1 node_x gnd NOT
+X2 S0 j0 node_x gnd NOT
+
+*mux outputs
+X3 j1 j0 d0 node_x gnd AND
+X4 j1 S0 d1 node_x gnd AND
+X5 S1 j0 d2 node_x gnd AND
+X6 S1 S0 d3 node_x gnd AND
+
+*and block - i
+X7 a3 a2 a1 a0 d3 ia3 ia2 ia1 ia0 node_x gnd enable
+X8 b3 b2 b1 b0 d3 ib3 ib2 ib1 ib0 node_x gnd enable
+
+X9 ia3 ib3 iout3 node_x gnd AND
+X10 ia2 ib2 iout2 node_x gnd AND
+X11 ia1 ib1 iout1 node_x gnd AND
+X12 ia0 ib0 iout0 node_x gnd AND
+
+*Adder - f
+X13 a3 a2 a1 a0 d0 fa3 fa2 fa1 fa0 node_x gnd enable
+X14 b3 b2 b1 b0 d0 fb3 fb2 fb1 fb0 node_x gnd enable
+
+X15 d0 d1 k1 node_x gnd AND
+
+X16 fb3 fb2 fb1 fb0 k1 fbu3 fbu2 fbu1 fbu0 node_x gnd updateB
+
+X17 fa0 fbu0 k1 fout0 fc1 node_x gnd full_adder
+X18 fa1 fbu1 fc1 fout1 fc2 node_x gnd full_adder
+X19 fa2 fbu2 fc2 fout2 fc3 node_x gnd full_adder
+X20 fa3 fbu3 fc3 fout3 fout4 node_x gnd full_adder
+
+
+*Subtractor - g
+X21 a3 a2 a1 a0 d1 ga3 ga2 ga1 ga0 node_x gnd enable
+X22 b3 b2 b1 b0 d1 gb3 gb2 gb1 gb0 node_x gnd enable
+
+
+X23 gb3 gb2 gb1 gb0 d1 gbu3 gbu2 gbu1 gbu0 node_x gnd updateB
+
+X24 ga0 gbu0 d1 gout0 gc1 node_x gnd full_adder
+X25 ga1 gbu1 gc1 gout1 gc2 node_x gnd full_adder
+X26 ga2 gbu2 gc2 gout2 gc3 node_x gnd full_adder
+X27 ga3 gbu3 gc3 gout3 gout4 node_x gnd full_adder
+
+*Comparator - h
+X28 a3 a2 a1 a0 d2 ha3 ha2 ha1 ha0 node_x gnd enable
+X29 b3 b2 b1 b0 d2 hb3 hb2 hb1 hb0 node_x gnd enable
+
+* equal
+X30 ha0 hb0 he0 node_x gnd XNOR
+X31 ha1 hb1 he1 node_x gnd XNOR
+X32 ha2 hb2 he2 node_x gnd XNOR
+X33 ha3 hb3 he3 node_x gnd XNOR
+
+X34 he3 he2 e0 node_x gnd AND
+X35 he1 e0 e1 node_x gnd AND
+X36 e1 he0 d2 houtEQ node_x gnd AND3
+* X37 e2 d2 houtEQ node_x gnd AND
+
+*greater than
+X37 hb3 hb2 hb1 hb0 d2 hbu3 hbu2 hbu1 hbu0 node_x gnd updateB
+
+X38 ha3 hbu3 hg3 node_x gnd AND
+X39 ha2 hbu2 he3 hg2 node_x gnd AND3
+X40 ha1 hbu1 e0 hg1 node_x gnd AND3
+X41 ha0 hbu0 e1 hg0 node_x gnd AND3
+
+X42 hg3 hg2 hg1 hg0 houtGT node_x gnd OR4
+
+*less than
+
+X43 houtGT gc node_x gnd NOT
+X44 houtEQ ec node_x gnd NOT
+X45 ec gc d2 houtLT node_x gnd AND3
+
+* X44 ha3 ha2 ha1 ha0 d2 hau3 hau2 hau1 hau0 node_x gnd updateB
+
+* X45 hau3 hb3 hl3 node_x gnd AND
+* X46 hau2 hb2 he3 hl2 node_x gnd AND3
+* X47 hau1 hb1 e0 hl1 node_x gnd AND3
+* X48 hau0 hb0 e1 hl0 node_x gnd AND3
+
+* X49 hl3 hl2 hl1 hl0 houtLT node_x gnd OR4
+
+.tran 1n 800n
+
+.control
+run
+set color0 = rgb:f/f/e
+set color1 = black
+
+plot v(a0) v(a1)+2 v(a2)+4 v(a3)+6
+plot v(b0) v(b1)+2 v(b2)+4 v(b3)+6
+plot v(S0) v(S1)+2
+plot v(d0) v(d1)+2 v(d2)+4 v(d3)+6
+plot v(fout0) v(fout1)+2 v(fout2)+4 v(fout3)+6 v(fout4)+8
+plot v(gout0) v(gout1)+2 v(gout2)+4 v(gout3)+6 v(gout4)+8
+plot v(houtGT) v(houtLT)+2 v(houtEQ)+4
+plot v(iout0) v(iout1)+2 v(iout2)+4 v(iout3)+6
+
+
+hardcopy inputA.ps v(a0) v(a1)+2 v(a2)+4 v(a3)+6
+hardcopy inputB.ps v(b0) v(b1)+2 v(b2)+4 v(b3)+6
+hardcopy selection.ps v(S0) v(S1)+2
+hardcopy outputMUX.ps v(d0) v(d1)+2 v(d2)+4 v(d3)+6
+hardcopy outputAdd.ps v(fout0) v(fout1)+2 v(fout2)+4 v(fout3)+6 v(fout4)+8
+hardcopy outputSub.ps v(gout0) v(gout1)+2 v(gout2)+4 v(gout3)+6 v(gout4)+8
+hardcopy outputComp.ps v(houtGT) v(houtLT)+2 v(houtEQ)+4
+hardcopy outputAnd.ps v(iout0) v(iout1)+2 v(iout2)+4 v(iout3)+6
+
+.end
+.endc
+
+
+
